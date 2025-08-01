@@ -1,0 +1,96 @@
+/* src/components/Header.css */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-medium) var(--spacing-large);
+  background: linear-gradient(90.48deg, #1B1464 -3.92%, #2099D6 233.8%);
+  color: #fff;
+}
+.header-logo {
+  display: flex;
+  align-items: center;
+  font-size: var(--title-size);
+  font-weight: bold;
+}
+.header-logo-icon {
+  margin-right: var(--spacing-small);
+}
+.header-user {
+  display: flex;
+  align-items: center;
+}
+.header-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: var(--spacing-small);
+}
+.header-dropdown {
+  margin-left: var(--spacing-small);
+  font-size: var(--body-size);
+}
+
+.user-email {
+  margin-right: var(--spacing-medium);
+  font-size: var(--body-size);
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.logout-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.logout-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Header navigation for admin buttons */
+.header-nav {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  justify-content: center;
+}
+
+.manage-users-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  cursor: pointer;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.manage-users-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.manage-users-btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}

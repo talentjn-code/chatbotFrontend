@@ -1,0 +1,38 @@
+/* src/components/EmptyState.css */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xlarge);
+  background: #fff;
+  border-radius: var(--radius-large);
+  box-shadow: 0 2px 8px rgba(44,62,153,0.05);
+  border: 1px solid var(--border);
+}
+.empty-illustration {
+  font-size: 48px;
+  margin-bottom: var(--spacing-large);
+}
+.empty-state h3 {
+  font-size: var(--subtitle-size);
+  margin-bottom: var(--spacing-small);
+}
+.empty-state p {
+  color: var(--text-secondary);
+  font-size: var(--body-size);
+  margin-bottom: var(--spacing-medium);
+}
+.primary-btn {
+  background: var(--secondary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-medium);
+  padding: var(--spacing-small) var(--spacing-large);
+  font-size: var(--body-size);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.primary-btn:hover {
+  background: #0056b3;
+}

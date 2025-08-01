@@ -1,0 +1,25 @@
+/* src/components/Navigation.css */
+.navigation {
+  background: linear-gradient(90.48deg, #1B1464 -3.92%, #2099D6 233.8%);
+  padding: 0 var(--spacing-large);
+}
+.navigation ul {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.navigation li {
+  margin-right: var(--spacing-large);
+}
+.navigation li.active a {
+  color: var(--secondary);
+  font-weight: bold;
+}
+.navigation a {
+  color: #fff;
+  text-decoration: none;
+  font-size: var(--body-size);
+  padding: var(--spacing-small) 0;
+  display: block;
+}

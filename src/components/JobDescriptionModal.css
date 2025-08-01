@@ -1,0 +1,102 @@
+.jd-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.jd-modal {
+  background: #fff;
+  border-radius: 8px;
+  max-width: 1200px;
+  width: 75vw;
+  height: 90vh;
+  min-height: 600px;
+  padding: 0 0 32px 0;
+  box-shadow: 0 4px 32px rgba(44,62,153,0.15);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.jd-modal-header {
+  background: linear-gradient(90deg, #2c3e99 0%, #1e5fa3 100%);
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  padding: 20px 24px;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.jd-modal-close {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+.jd-modal-row {
+  display: flex;
+  gap: 16px;
+  margin: 32px 24px 0 24px;
+}
+.jd-modal-input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  font-size: 1rem;
+}
+.jd-modal-section-label {
+  font-weight: 600;
+  margin: 32px 24px 8px 24px;
+  font-size: 1.1rem;
+}
+.jd-modal-radio-row {
+  display: flex;
+  align-items: center;
+  margin: 0 24px 16px 24px;
+  gap: 16px;
+}
+.jd-modal-textarea {
+  width: calc(100% - 48px);
+  margin: 0 24px;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  font-size: 1rem;
+  resize: none;
+  min-height: 200px;
+  flex: 1;
+  box-sizing: border-box;
+}
+.jd-modal-file {
+  margin: 0 24px;
+  font-size: 1rem;
+}
+.jd-modal-submit {
+  margin-left: 24px;
+  padding: 10px 32px;
+  border-radius: 8px;
+  background: #2c3e99;
+  color: #fff;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  width: 160px;
+  align-self: flex-start;
+}
+.jd-modal-submit:disabled {
+  background: #c7d2e6;
+  cursor: not-allowed;
+}
+.jd-modal form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
