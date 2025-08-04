@@ -893,86 +893,35 @@ const MockInterview = ({ jobData, resumeFile }) => {
 
           {overallFeedback ? (
             <div>
-              {/* Scores Section */}
-              {overallFeedback.parameter_scores && (
-                <div style={{ 
-                  backgroundColor: '#f8f9fa',
-                  padding: '20px',
-                  borderRadius: '8px',
-                  marginBottom: '30px'
-                }}>
-                  <h2 style={{ marginBottom: '20px' }}>Your Interview Scores</h2>
-                  
-                  <div style={{ marginBottom: '15px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                      <span>Grammar & Communication</span>
-                      <strong>{overallFeedback.parameter_scores.grammar_communication_score || 0}/10</strong>
-                    </div>
-                    <div style={{ height: '8px', backgroundColor: '#e9ecef', borderRadius: '4px' }}>
-                      <div style={{ 
-                        height: '100%',
-                        width: `${((overallFeedback.parameter_scores.grammar_communication_score || 0) / 10) * 100}%`,
-                        backgroundColor: '#28a745',
-                        borderRadius: '4px'
-                      }}></div>
-                    </div>
-                  </div>
-
-                  <div style={{ marginBottom: '15px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                      <span>Technical Skills</span>
-                      <strong>{overallFeedback.parameter_scores.technical_skills_score || 0}/45</strong>
-                    </div>
-                    <div style={{ height: '8px', backgroundColor: '#e9ecef', borderRadius: '4px' }}>
-                      <div style={{ 
-                        height: '100%',
-                        width: `${((overallFeedback.parameter_scores.technical_skills_score || 0) / 45) * 100}%`,
-                        backgroundColor: '#17a2b8',
-                        borderRadius: '4px'
-                      }}></div>
-                    </div>
-                  </div>
-
-                  <div style={{ marginBottom: '20px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                      <span>Relevant Experience</span>
-                      <strong>{overallFeedback.parameter_scores.relevant_experience_score || 0}/45</strong>
-                    </div>
-                    <div style={{ height: '8px', backgroundColor: '#e9ecef', borderRadius: '4px' }}>
-                      <div style={{ 
-                        height: '100%',
-                        width: `${((overallFeedback.parameter_scores.relevant_experience_score || 0) / 45) * 100}%`,
-                        backgroundColor: '#ffc107',
-                        borderRadius: '4px'
-                      }}></div>
-                    </div>
-                  </div>
-
-                  <div style={{ 
-                    textAlign: 'center',
-                    paddingTop: '20px',
-                    borderTop: '1px solid #dee2e6'
-                  }}>
-                    <div style={{ fontSize: '18px', marginBottom: '10px' }}>Total Score</div>
-                    <div style={{ fontSize: '36px', fontWeight: 'bold', color: '#2c3e99' }}>
-                      {overallFeedback.parameter_scores.total_score}/100
-                    </div>
-                  </div>
+              {/* Average Score Section */}
+              <div style={{ 
+                backgroundColor: '#f8f9fa',
+                padding: '30px',
+                borderRadius: '8px',
+                marginBottom: '30px',
+                textAlign: 'center'
+              }}>
+                <h2 style={{ marginBottom: '20px' }}>Your Interview Score</h2>
+                <div style={{ fontSize: '48px', fontWeight: 'bold', color: '#2c3e99' }}>
+                  {overallFeedback.average_score ? `${overallFeedback.average_score}/100` : (overallFeedback.total_score || '0/100')}
                 </div>
-              )}
+                <div style={{ fontSize: '16px', color: '#666', marginTop: '10px' }}>
+                  Based on your answered questions
+                </div>
+              </div>
 
               {/* Parameter Feedback */}
               {overallFeedback.parameter_feedback && (
                 <div style={{ marginBottom: '30px' }}>
                   <h2 style={{ marginBottom: '20px' }}>Detailed Feedback</h2>
                   {Object.entries(overallFeedback.parameter_feedback).map(([param, feedback], index) => {
-                    let score = '';
+                    let title = '';
                     if (param.includes('grammar') || param.includes('communication')) {
-                      score = `${overallFeedback.parameter_scores?.grammar_communication_score || 0}/10`;
+                      title = 'Grammar & Communication';
                     } else if (param.includes('technical')) {
-                      score = `${overallFeedback.parameter_scores?.technical_skills_score || 0}/45`;
+                      title = 'Technical Knowledge & Skills';
                     } else if (param.includes('experience')) {
-                      score = `${overallFeedback.parameter_scores?.relevant_experience_score || 0}/45`;
+                      title = 'Relevant Experience & Examples';
                     }
                     
                     return (
@@ -982,12 +931,9 @@ const MockInterview = ({ jobData, resumeFile }) => {
                         borderRadius: '8px',
                         marginBottom: '15px'
                       }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                          <h3 style={{ margin: 0, textTransform: 'capitalize' }}>
-                            {param.replace('_', ' ').replace(' score', '')}
-                          </h3>
-                          {score && <span style={{ fontWeight: 'bold', color: '#2c3e99' }}>Score: {score}</span>}
-                        </div>
+                        <h3 style={{ margin: 0, marginBottom: '10px' }}>
+                          {title}
+                        </h3>
                         <p style={{ margin: 0, lineHeight: '1.6', color: '#666' }}>{feedback}</p>
                       </div>
                     );
@@ -1089,21 +1035,19 @@ const MockInterview = ({ jobData, resumeFile }) => {
                 yPosition += 20;
                 
                 // Overall Score Section
-                if (overallFeedback?.parameter_scores) {
+                if (overallFeedback?.average_score || overallFeedback?.total_score) {
                   pdf.setFontSize(16);
                   pdf.setFont(undefined, 'bold');
                   pdf.text('Overall Score', margin, yPosition);
                   yPosition += 15;
                   
-                  pdf.setFontSize(12);
+                  pdf.setFontSize(14);
                   pdf.setFont(undefined, 'normal');
-                  pdf.text(`Total Score: ${overallFeedback.parameter_scores.total_score}/100`, margin, yPosition);
+                  const displayScore = overallFeedback.average_score ? `${overallFeedback.average_score}/100` : (overallFeedback.total_score || '0/100');
+                  pdf.text(`Total Score: ${displayScore}`, margin, yPosition);
                   yPosition += 10;
-                  pdf.text(`Grammar & Communication: ${overallFeedback.parameter_scores.grammar_communication_score || 0}/10`, margin, yPosition);
-                  yPosition += 10;
-                  pdf.text(`Technical Skills: ${overallFeedback.parameter_scores.technical_skills_score || 0}/45`, margin, yPosition);
-                  yPosition += 10;
-                  pdf.text(`Relevant Experience: ${overallFeedback.parameter_scores.relevant_experience_score || 0}/45`, margin, yPosition);
+                  pdf.setFontSize(11);
+                  pdf.text('Based on your answered questions', margin, yPosition);
                   yPosition += 20;
                 }
                 
