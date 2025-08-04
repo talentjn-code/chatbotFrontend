@@ -11,15 +11,15 @@ const TopicSelector = ({ title, subtitle, searchBar, selectedTopic, topicList, o
           className={selectedTopic && selectedTopic.name === "My JDs" ? 'selected' : ''}
           onClick={() => onSelect(topicList.find(topic => topic.name === "My JDs"))}
         >
-          My JDs
+          Interview Prep
         </li>
 
-        <li
+        {/* <li
           className={selectedTopic && selectedTopic.name === "TJ JDs" ? 'selected' : ''}
           onClick={() => onSelect(topicList.find(topic => topic.name === "TJ JDs"))}
         >
           TJ JDs
-        </li>
+        </li> */}
     </ul>
   </section>
 );
