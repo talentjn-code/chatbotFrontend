@@ -444,6 +444,17 @@ const MockInterview = ({ jobData, resumeFile }) => {
       setTimeout(() => {
         setConversationState('waiting');
       }, 500);
+      
+      // Auto-scroll to bottom after moving to next question
+      setTimeout(() => {
+        const conversationContainer = document.querySelector('.conversation-container');
+        if (conversationContainer) {
+          conversationContainer.scrollTo({
+            top: conversationContainer.scrollHeight,
+            behavior: 'smooth'
+          });
+        }
+      }, 100);
     }
   };
 
@@ -498,6 +509,17 @@ const MockInterview = ({ jobData, resumeFile }) => {
       setTimeout(() => {
         setConversationState('waiting');
       }, 500);
+      
+      // Auto-scroll to bottom after skipping
+      setTimeout(() => {
+        const conversationContainer = document.querySelector('.conversation-container');
+        if (conversationContainer) {
+          conversationContainer.scrollTo({
+            top: conversationContainer.scrollHeight,
+            behavior: 'smooth'
+          });
+        }
+      }, 100);
     }
   };
 
