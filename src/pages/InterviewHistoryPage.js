@@ -127,8 +127,6 @@ const InterviewHistoryPage = () => {
               pdf.text(`Company: ${exportData.session_info.company_name}`, margin, yPosition);
               yPosition += 10;
               pdf.text(`Date: ${new Date(exportData.session_info.date).toLocaleDateString()}`, margin, yPosition);
-              yPosition += 10;
-              pdf.text(`Questions Answered: ${exportData.session_info.questions_answered}/${exportData.session_info.total_questions}`, margin, yPosition);
               yPosition += 20;
               
               // Overall Scores Section (if available)
