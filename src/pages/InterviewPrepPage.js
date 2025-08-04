@@ -34,8 +34,8 @@ const topicSelectorData = {
   searchBar: { placeholder: 'Search topics', icon: 'search' },
   topicList: [
     { id: 'all_chats', name: 'All Chats', type: 'all_chats' },
-    { id: 1, name: 'My JDs', type: 'topic' },
-    { id: 2, name: 'TJ JDs', type: 'topic' },
+    { id: 1, name: 'Interview Prep', type: 'topic' },
+    // { id: 2, name: 'TJ JDs', type: 'topic' },
   ],
 };
 
