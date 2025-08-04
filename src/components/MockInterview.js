@@ -448,31 +448,56 @@ const MockInterview = ({ jobData, resumeFile }) => {
   };
 
   const skipQuestion = () => {
+    // Add the skipped question to history
+    const currentQuestion = interviewSession.questions[currentQuestionIndex];
+    const questionText = typeof currentQuestion === 'object' ? currentQuestion.question : currentQuestion;
+    
+    const skippedItem = {
+      questionNumber: currentQuestionIndex + 1,
+      question: questionText,
+      response: 'Question skipped',
+      evaluation: null,
+      timestamp: new Date().toISOString(),
+      skipped: true
+    };
+    
+    // Add to conversation history
+    setConversationHistory(prev => [...prev, skippedItem]);
+    
+    // Store in QA data for saving
+    const skippedQA = {
+      question: currentQuestion,
+      answer: '',
+      transcription: '',
+      score: null,
+      feedback: '',
+      improvements: [],
+      answered: false
+    };
+    
+    setQaData(prevQA => [...prevQA, skippedQA]);
+    
     // If this is the last question, trigger the interview completion flow
     if (currentQuestionIndex + 1 >= interviewSession.questions.length) {
-      // Add the skipped question to history
-      const currentQuestion = interviewSession.questions[currentQuestionIndex];
-      const questionText = typeof currentQuestion === 'object' ? currentQuestion.question : currentQuestion;
-      
-      const skippedItem = {
-        questionNumber: currentQuestionIndex + 1,
-        question: questionText,
-        response: 'Question skipped',
-        evaluation: null,
-        timestamp: new Date().toISOString()
-      };
-      
-      setConversationHistory(prev => {
-        const newHistory = [...prev, skippedItem];
-        // Generate overall feedback with the complete history
-        setTimeout(() => {
-          generateOverallFeedbackWithHistory(newHistory);
-        }, 100);
-        return newHistory;
-      });
+      // Generate overall feedback with the complete history
+      setTimeout(() => {
+        generateOverallFeedbackWithHistory([...conversationHistory, skippedItem]);
+      }, 100);
     } else {
       // Not the last question, proceed normally
-      nextQuestion();
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setShowEvaluation(false);
+      setEvaluation(null);
+      setConversationState('question');
+      setCandidateResponse('');
+      // Set intro to false after first question
+      if (currentQuestionIndex === 0) {
+        setShowIntro(false);
+      }
+      // Show waiting state after a brief delay
+      setTimeout(() => {
+        setConversationState('waiting');
+      }, 500);
     }
   };
 
@@ -1349,21 +1374,37 @@ const MockInterview = ({ jobData, resumeFile }) => {
                     <p><strong>Q{item.questionNumber}:</strong> {item.question}</p>
                   </div>
                 </div>
-                <div className="message-bubble candidate-message" style={{ marginBottom: '10px' }}>
-                  <div className="message-content">
-                    <p><strong>Your answer:</strong> {item.response}</p>
-                  </div>
-                </div>
-                {item.evaluation && (
-                  <div className="message-bubble ai-message feedback-message">
-                    <div className="message-avatar">
-                      <span>Jn</span>
-                    </div>
+                {item.skipped ? (
+                  <div className="message-bubble candidate-message" style={{ 
+                    marginBottom: '10px', 
+                    backgroundColor: 'rgba(255, 107, 107, 0.2)',
+                    border: '1px solid rgba(255, 107, 107, 0.4)'
+                  }}>
                     <div className="message-content">
-                      <p><strong>Feedback:</strong> {item.evaluation.feedback}</p>
-                      {(item.evaluation.score !== null && item.evaluation.score !== undefined) && <p><strong>Score:</strong> {item.evaluation.score}/10</p>}
+                      <p style={{ color: '#ff6b6b', fontStyle: 'italic' }}>
+                        <strong>Question Skipped</strong>
+                      </p>
                     </div>
                   </div>
+                ) : (
+                  <>
+                    <div className="message-bubble candidate-message" style={{ marginBottom: '10px' }}>
+                      <div className="message-content">
+                        <p><strong>Your answer:</strong> {item.response}</p>
+                      </div>
+                    </div>
+                    {item.evaluation && (
+                      <div className="message-bubble ai-message feedback-message">
+                        <div className="message-avatar">
+                          <span>Jn</span>
+                        </div>
+                        <div className="message-content">
+                          <p><strong>Feedback:</strong> {item.evaluation.feedback}</p>
+                          {(item.evaluation.score !== null && item.evaluation.score !== undefined) && <p><strong>Score:</strong> {item.evaluation.score}/10</p>}
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             ))}
