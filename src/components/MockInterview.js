@@ -1121,6 +1121,53 @@ const MockInterview = ({ jobData, resumeFile }) => {
                   });
                 }
                 
+                // Detailed Feedback Section (Parameter Feedback)
+                if (overallFeedback && overallFeedback.parameter_feedback) {
+                  // Check if we need a new page
+                  if (yPosition > 180) {
+                    pdf.addPage();
+                    yPosition = 30;
+                  }
+                  
+                  pdf.setFontSize(16);
+                  pdf.setFont(undefined, 'bold');
+                  pdf.text('Detailed Feedback', margin, yPosition);
+                  yPosition += 15;
+                  
+                  pdf.setFontSize(12);
+                  pdf.setFont(undefined, 'normal');
+                  
+                  Object.entries(overallFeedback.parameter_feedback).forEach(([param, feedback]) => {
+                    let title = '';
+                    if (param.includes('grammar') || param.includes('communication')) {
+                      title = 'Grammar & Communication';
+                    } else if (param.includes('technical')) {
+                      title = 'Technical Knowledge & Skills';
+                    } else if (param.includes('experience')) {
+                      title = 'Relevant Experience & Examples';
+                    }
+                    
+                    if (title) {
+                      // Check if we need a new page
+                      if (yPosition > 220) {
+                        pdf.addPage();
+                        yPosition = 30;
+                      }
+                      
+                      pdf.setFont(undefined, 'bold');
+                      pdf.text(title, margin, yPosition);
+                      yPosition += 8;
+                      
+                      pdf.setFont(undefined, 'normal');
+                      const feedbackLines = pdf.splitTextToSize(feedback, maxLineWidth);
+                      pdf.text(feedbackLines, margin, yPosition);
+                      yPosition += feedbackLines.length * 7 + 10;
+                    }
+                  });
+                  
+                  yPosition += 10;
+                }
+
                 // Overall Feedback Section
                 if (overallFeedback) {
                   // Check if we need a new page

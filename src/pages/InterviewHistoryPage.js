@@ -200,6 +200,53 @@ const InterviewHistoryPage = () => {
                 yPosition += 10; // Space between questions
               });
               
+              // Detailed Feedback Section (Parameter Feedback)
+              if (overallFeedback && overallFeedback.parameter_feedback) {
+                // Check if we need a new page
+                if (yPosition > 160) {
+                  pdf.addPage();
+                  yPosition = 30;
+                }
+                
+                pdf.setFontSize(14);
+                pdf.setFont(undefined, 'bold');
+                pdf.text('Detailed Feedback', margin, yPosition);
+                yPosition += 12;
+                
+                pdf.setFontSize(11);
+                pdf.setFont(undefined, 'normal');
+                
+                Object.entries(overallFeedback.parameter_feedback).forEach(([param, feedback]) => {
+                  let title = '';
+                  if (param.includes('grammar') || param.includes('communication')) {
+                    title = 'Grammar & Communication';
+                  } else if (param.includes('technical')) {
+                    title = 'Technical Knowledge & Skills';
+                  } else if (param.includes('experience')) {
+                    title = 'Relevant Experience & Examples';
+                  }
+                  
+                  if (title) {
+                    // Check if we need a new page
+                    if (yPosition > 220) {
+                      pdf.addPage();
+                      yPosition = 30;
+                    }
+                    
+                    pdf.setFont(undefined, 'bold');
+                    pdf.text(title, margin, yPosition);
+                    yPosition += 8;
+                    
+                    pdf.setFont(undefined, 'normal');
+                    const feedbackLines = pdf.splitTextToSize(feedback, maxLineWidth);
+                    pdf.text(feedbackLines, margin, yPosition);
+                    yPosition += feedbackLines.length * 6 + 8;
+                  }
+                });
+                
+                yPosition += 10;
+              }
+
               // Overall Feedback Section
               if (overallFeedback) {
                 // Check if we need a new page
@@ -322,6 +369,37 @@ const InterviewHistoryPage = () => {
                 <div style={{ fontSize: 14, color: '#666' }}>
                   Based on answered questions
                 </div>
+              </div>
+            )}
+
+            {/* Detailed Feedback (Parameter Feedback) */}
+            {overallFeedback && overallFeedback.parameter_feedback && (
+              <div style={{ marginBottom: 25 }}>
+                <h4 style={{ marginBottom: 15, fontSize: 18, color: '#2c3e99' }}>Detailed Feedback</h4>
+                {Object.entries(overallFeedback.parameter_feedback).map(([param, feedback], index) => {
+                  let title = '';
+                  if (param.includes('grammar') || param.includes('communication')) {
+                    title = 'Grammar & Communication';
+                  } else if (param.includes('technical')) {
+                    title = 'Technical Knowledge & Skills';
+                  } else if (param.includes('experience')) {
+                    title = 'Relevant Experience & Examples';
+                  }
+                  
+                  return title ? (
+                    <div key={index} style={{ 
+                      backgroundColor: '#f8f9fa',
+                      padding: '15px',
+                      borderRadius: '8px',
+                      marginBottom: '15px'
+                    }}>
+                      <h5 style={{ margin: 0, marginBottom: '10px', color: '#495057' }}>
+                        {title}
+                      </h5>
+                      <p style={{ margin: 0, lineHeight: '1.6', color: '#666' }}>{feedback}</p>
+                    </div>
+                  ) : null;
+                })}
               </div>
             )}
 
