@@ -1124,12 +1124,6 @@ const MockInterview = ({ jobData, resumeFile }) => {
                 pdf.setFont(undefined, 'normal');
                 yPosition += 10;
                 
-                // Questions and Answers Section
-                pdf.setFontSize(16);
-                pdf.setFont(undefined, 'bold');
-                pdf.text('Questions and Answers', margin, yPosition);
-                yPosition += 15;
-                
                 // Get all questions from interviewSession
                 if (interviewSession && interviewSession.questions) {
                   interviewSession.questions.forEach((question, index) => {
