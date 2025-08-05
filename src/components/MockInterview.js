@@ -913,7 +913,7 @@ const MockInterview = ({ jobData, resumeFile }) => {
               {/* Parameter Feedback */}
               {overallFeedback.parameter_feedback && (
                 <div style={{ marginBottom: '30px' }}>
-                  <h2 style={{ marginBottom: '20px' }}>Detailed Feedback</h2>
+                  <h2 style={{ marginBottom: '20px' }}>Feedback Summary</h2>
                   {Object.entries(overallFeedback.parameter_feedback).map(([param, feedback], index) => {
                     let title = '';
                     if (param.includes('grammar') || param.includes('communication')) {
@@ -1051,6 +1051,79 @@ const MockInterview = ({ jobData, resumeFile }) => {
                   yPosition += 20;
                 }
                 
+                // Feedback Summary Section
+                if (overallFeedback && overallFeedback.parameter_feedback) {
+                  pdf.setFontSize(14);
+                  pdf.setFont(undefined, 'bold');
+                  pdf.text('Feedback Summary', margin, yPosition);
+                  yPosition += 12;
+                  
+                  pdf.setFontSize(11);
+                  pdf.setFont(undefined, 'normal');
+                  
+                  // Grammar & Communication
+                  let grammarFeedback = '';
+                  Object.entries(overallFeedback.parameter_feedback).forEach(([param, feedback]) => {
+                    if (param.includes('grammar') || param.includes('communication')) {
+                      grammarFeedback = feedback;
+                    }
+                  });
+                  if (grammarFeedback) {
+                    pdf.setFont(undefined, 'bold');
+                    pdf.text('Grammar & Communication', margin, yPosition);
+                    yPosition += 8;
+                    pdf.setFont(undefined, 'normal');
+                    const grammarLines = pdf.splitTextToSize(grammarFeedback, maxLineWidth);
+                    pdf.text(grammarLines, margin, yPosition);
+                    yPosition += grammarLines.length * 6 + 8;
+                  }
+                  
+                  // Relevant Experience & Examples
+                  let experienceFeedback = '';
+                  Object.entries(overallFeedback.parameter_feedback).forEach(([param, feedback]) => {
+                    if (param.includes('experience')) {
+                      experienceFeedback = feedback;
+                    }
+                  });
+                  if (experienceFeedback) {
+                    pdf.setFont(undefined, 'bold');
+                    pdf.text('Relevant Experience & Examples', margin, yPosition);
+                    yPosition += 8;
+                    pdf.setFont(undefined, 'normal');
+                    const experienceLines = pdf.splitTextToSize(experienceFeedback, maxLineWidth);
+                    pdf.text(experienceLines, margin, yPosition);
+                    yPosition += experienceLines.length * 6 + 8;
+                  }
+                  
+                  // Technical Knowledge & Skills
+                  let technicalFeedback = '';
+                  Object.entries(overallFeedback.parameter_feedback).forEach(([param, feedback]) => {
+                    if (param.includes('technical')) {
+                      technicalFeedback = feedback;
+                    }
+                  });
+                  if (technicalFeedback) {
+                    pdf.setFont(undefined, 'bold');
+                    pdf.text('Technical Knowledge & Skills', margin, yPosition);
+                    yPosition += 8;
+                    pdf.setFont(undefined, 'normal');
+                    const technicalLines = pdf.splitTextToSize(technicalFeedback, maxLineWidth);
+                    pdf.text(technicalLines, margin, yPosition);
+                    yPosition += technicalLines.length * 6 + 8;
+                  }
+                  
+                  yPosition += 10;
+                }
+                
+                pdf.setFontSize(14);
+                pdf.setFont(undefined, 'bold');
+                pdf.text('Question-wise Feedback', margin, yPosition);
+                yPosition += 12;
+                
+                pdf.setFontSize(11);
+                pdf.setFont(undefined, 'normal');
+                yPosition += 10;
+                
                 // Questions and Answers Section
                 pdf.setFontSize(16);
                 pdf.setFont(undefined, 'bold');
@@ -1121,52 +1194,6 @@ const MockInterview = ({ jobData, resumeFile }) => {
                   });
                 }
                 
-                // Detailed Feedback Section (Parameter Feedback)
-                if (overallFeedback && overallFeedback.parameter_feedback) {
-                  // Check if we need a new page
-                  if (yPosition > 180) {
-                    pdf.addPage();
-                    yPosition = 30;
-                  }
-                  
-                  pdf.setFontSize(16);
-                  pdf.setFont(undefined, 'bold');
-                  pdf.text('Detailed Feedback', margin, yPosition);
-                  yPosition += 15;
-                  
-                  pdf.setFontSize(12);
-                  pdf.setFont(undefined, 'normal');
-                  
-                  Object.entries(overallFeedback.parameter_feedback).forEach(([param, feedback]) => {
-                    let title = '';
-                    if (param.includes('grammar') || param.includes('communication')) {
-                      title = 'Grammar & Communication';
-                    } else if (param.includes('technical')) {
-                      title = 'Technical Knowledge & Skills';
-                    } else if (param.includes('experience')) {
-                      title = 'Relevant Experience & Examples';
-                    }
-                    
-                    if (title) {
-                      // Check if we need a new page
-                      if (yPosition > 220) {
-                        pdf.addPage();
-                        yPosition = 30;
-                      }
-                      
-                      pdf.setFont(undefined, 'bold');
-                      pdf.text(title, margin, yPosition);
-                      yPosition += 8;
-                      
-                      pdf.setFont(undefined, 'normal');
-                      const feedbackLines = pdf.splitTextToSize(feedback, maxLineWidth);
-                      pdf.text(feedbackLines, margin, yPosition);
-                      yPosition += feedbackLines.length * 7 + 10;
-                    }
-                  });
-                  
-                  yPosition += 10;
-                }
 
                 // Overall Feedback Section
                 if (overallFeedback) {

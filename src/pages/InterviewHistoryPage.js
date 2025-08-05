@@ -143,9 +143,80 @@ const InterviewHistoryPage = () => {
                 yPosition += 8;
                 pdf.setFontSize(10);
                 pdf.text('Based on answered questions', margin, yPosition);
-                yPosition += 15;
+                yPosition += 20;
               }
               
+              // Feedback Summary Section
+              if (overallFeedback && overallFeedback.parameter_feedback) {
+                pdf.setFontSize(14);
+                pdf.setFont(undefined, 'bold');
+                pdf.text('Feedback Summary', margin, yPosition);
+                yPosition += 12;
+                
+                pdf.setFontSize(11);
+                pdf.setFont(undefined, 'normal');
+                
+                // Grammar & Communication
+                let grammarFeedback = '';
+                Object.entries(overallFeedback.parameter_feedback).forEach(([param, feedback]) => {
+                  if (param.includes('grammar') || param.includes('communication')) {
+                    grammarFeedback = feedback;
+                  }
+                });
+                if (grammarFeedback) {
+                  pdf.setFont(undefined, 'bold');
+                  pdf.text('Grammar & Communication', margin, yPosition);
+                  yPosition += 8;
+                  pdf.setFont(undefined, 'normal');
+                  const grammarLines = pdf.splitTextToSize(grammarFeedback, maxLineWidth);
+                  pdf.text(grammarLines, margin, yPosition);
+                  yPosition += grammarLines.length * 6 + 8;
+                }
+                
+                // Relevant Experience & Examples
+                let experienceFeedback = '';
+                Object.entries(overallFeedback.parameter_feedback).forEach(([param, feedback]) => {
+                  if (param.includes('experience')) {
+                    experienceFeedback = feedback;
+                  }
+                });
+                if (experienceFeedback) {
+                  pdf.setFont(undefined, 'bold');
+                  pdf.text('Relevant Experience & Examples', margin, yPosition);
+                  yPosition += 8;
+                  pdf.setFont(undefined, 'normal');
+                  const experienceLines = pdf.splitTextToSize(experienceFeedback, maxLineWidth);
+                  pdf.text(experienceLines, margin, yPosition);
+                  yPosition += experienceLines.length * 6 + 8;
+                }
+                
+                // Technical Knowledge & Skills
+                let technicalFeedback = '';
+                Object.entries(overallFeedback.parameter_feedback).forEach(([param, feedback]) => {
+                  if (param.includes('technical')) {
+                    technicalFeedback = feedback;
+                  }
+                });
+                if (technicalFeedback) {
+                  pdf.setFont(undefined, 'bold');
+                  pdf.text('Technical Knowledge & Skills', margin, yPosition);
+                  yPosition += 8;
+                  pdf.setFont(undefined, 'normal');
+                  const technicalLines = pdf.splitTextToSize(technicalFeedback, maxLineWidth);
+                  pdf.text(technicalLines, margin, yPosition);
+                  yPosition += technicalLines.length * 6 + 8;
+                }
+                
+                yPosition += 10;
+              } 
+                pdf.setFontSize(14);
+                pdf.setFont(undefined, 'bold');
+                pdf.text('Question-wise Feedback', margin, yPosition);
+                yPosition += 12;
+                
+                pdf.setFontSize(11);
+                pdf.setFont(undefined, 'normal');
+                yPosition += 10;
               // Questions and answers
               exportData.questions_and_answers.forEach((qa, index) => {
                 // Check if we need a new page
@@ -197,53 +268,6 @@ const InterviewHistoryPage = () => {
                 
                 yPosition += 10; // Space between questions
               });
-              
-              // Detailed Feedback Section (Parameter Feedback)
-              if (overallFeedback && overallFeedback.parameter_feedback) {
-                // Check if we need a new page
-                if (yPosition > 160) {
-                  pdf.addPage();
-                  yPosition = 30;
-                }
-                
-                pdf.setFontSize(14);
-                pdf.setFont(undefined, 'bold');
-                pdf.text('Detailed Feedback', margin, yPosition);
-                yPosition += 12;
-                
-                pdf.setFontSize(11);
-                pdf.setFont(undefined, 'normal');
-                
-                Object.entries(overallFeedback.parameter_feedback).forEach(([param, feedback]) => {
-                  let title = '';
-                  if (param.includes('grammar') || param.includes('communication')) {
-                    title = 'Grammar & Communication';
-                  } else if (param.includes('technical')) {
-                    title = 'Technical Knowledge & Skills';
-                  } else if (param.includes('experience')) {
-                    title = 'Relevant Experience & Examples';
-                  }
-                  
-                  if (title) {
-                    // Check if we need a new page
-                    if (yPosition > 220) {
-                      pdf.addPage();
-                      yPosition = 30;
-                    }
-                    
-                    pdf.setFont(undefined, 'bold');
-                    pdf.text(title, margin, yPosition);
-                    yPosition += 8;
-                    
-                    pdf.setFont(undefined, 'normal');
-                    const feedbackLines = pdf.splitTextToSize(feedback, maxLineWidth);
-                    pdf.text(feedbackLines, margin, yPosition);
-                    yPosition += feedbackLines.length * 6 + 8;
-                  }
-                });
-                
-                yPosition += 10;
-              }
 
               // Overall Feedback Section
               if (overallFeedback) {
@@ -370,10 +394,10 @@ const InterviewHistoryPage = () => {
               </div>
             )}
 
-            {/* Detailed Feedback (Parameter Feedback) */}
+            {/* Feedback Summary (Parameter Feedback) */}
             {overallFeedback && overallFeedback.parameter_feedback && (
               <div style={{ marginBottom: 25 }}>
-                <h4 style={{ marginBottom: 15, fontSize: 18, color: '#2c3e99' }}>Detailed Feedback</h4>
+                <h4 style={{ marginBottom: 15, fontSize: 18, color: '#2c3e99' }}>Feedback Summary</h4>
                 {Object.entries(overallFeedback.parameter_feedback).map(([param, feedback], index) => {
                   let title = '';
                   if (param.includes('grammar') || param.includes('communication')) {
@@ -400,46 +424,12 @@ const InterviewHistoryPage = () => {
                 })}
               </div>
             )}
-
-            {/* Strengths */}
-            {(overallFeedback.detailed_strengths || overallFeedback.strengths)?.length > 0 && (
-              <div style={{ marginBottom: 20 }}>
-                <h4 style={{ color: '#28a745', marginBottom: 10, fontSize: 16 }}>Strengths</h4>
-                <ul style={{ margin: 0, paddingLeft: 20 }}>
-                  {(overallFeedback.detailed_strengths || overallFeedback.strengths).map((strength, idx) => (
-                    <li key={idx} style={{ marginBottom: 5, color: '#555' }}>{strength}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Areas for Improvement */}
-            {(overallFeedback.detailed_improvements || overallFeedback.areas_for_improvement)?.length > 0 && (
-              <div style={{ marginBottom: 20 }}>
-                <h4 style={{ color: '#dc3545', marginBottom: 10, fontSize: 16 }}>Areas for Improvement</h4>
-                <ul style={{ margin: 0, paddingLeft: 20 }}>
-                  {(overallFeedback.detailed_improvements || overallFeedback.areas_for_improvement).map((area, idx) => (
-                    <li key={idx} style={{ marginBottom: 5, color: '#555' }}>{area}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Recommendations */}
-            {overallFeedback.recommendations?.length > 0 && (
-              <div>
-                <h4 style={{ color: '#17a2b8', marginBottom: 10, fontSize: 16 }}>Recommendations</h4>
-                <ul style={{ margin: 0, paddingLeft: 20 }}>
-                  {overallFeedback.recommendations.map((rec, idx) => (
-                    <li key={idx} style={{ marginBottom: 5, color: '#555' }}>{rec}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
           </div>
         )}
 
         <div style={{ maxHeight: 600, overflowY: 'auto' }}>
+        <h4 style={{ marginBottom: 15, fontSize: 18, color: '#2c3e99' }}>Question-wise Feedback</h4>
+
           {qaData.map((qa, index) => (
             <div key={index} style={{ marginBottom: 32, borderBottom: index < qaData.length - 1 ? '1px solid #eee' : 'none', paddingBottom: 24 }}>
               {/* Question */}
@@ -545,6 +535,43 @@ const InterviewHistoryPage = () => {
               )}
             </div>
           ))}
+        <h4 style={{ marginBottom: 15, fontSize: 18, color: '#2c3e99' }}>Overall Feedback</h4>
+
+              {/* Strengths */}
+                      {(overallFeedback.detailed_strengths || overallFeedback.strengths)?.length > 0 && (
+              <div style={{ marginBottom: 20 }}>
+                <h4 style={{ color: '#28a745', marginBottom: 10, fontSize: 16 }}>Strengths</h4>
+                <ul style={{ margin: 0, paddingLeft: 20 }}>
+                  {(overallFeedback.detailed_strengths || overallFeedback.strengths).map((strength, idx) => (
+                    <li key={idx} style={{ marginBottom: 5, color: '#555' }}>{strength}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Areas for Improvement */}
+            {(overallFeedback.detailed_improvements || overallFeedback.areas_for_improvement)?.length > 0 && (
+              <div style={{ marginBottom: 20 }}>
+                <h4 style={{ color: '#dc3545', marginBottom: 10, fontSize: 16 }}>Areas for Improvement</h4>
+                <ul style={{ margin: 0, paddingLeft: 20 }}>
+                  {(overallFeedback.detailed_improvements || overallFeedback.areas_for_improvement).map((area, idx) => (
+                    <li key={idx} style={{ marginBottom: 5, color: '#555' }}>{area}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Recommendations */}
+            {overallFeedback.recommendations?.length > 0 && (
+              <div>
+                <h4 style={{ color: '#17a2b8', marginBottom: 10, fontSize: 16 }}>Recommendations</h4>
+                <ul style={{ margin: 0, paddingLeft: 20 }}>
+                  {overallFeedback.recommendations.map((rec, idx) => (
+                    <li key={idx} style={{ marginBottom: 5, color: '#555' }}>{rec}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           
           {qaData.length === 0 && (
             <div style={{ color: '#888', fontSize: 16, marginTop: 40, textAlign: 'center' }}>
