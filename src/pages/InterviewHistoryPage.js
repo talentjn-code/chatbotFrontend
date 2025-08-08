@@ -279,7 +279,7 @@ const InterviewHistoryPage = () => {
                 
                 pdf.setFontSize(14);
                 pdf.setFont(undefined, 'bold');
-                pdf.text('Overall Feedback', margin, yPosition);
+                pdf.text('Strengths and Weaknesses', margin, yPosition);
                 yPosition += 12;
                 
                 pdf.setFontSize(11);
@@ -535,7 +535,7 @@ const InterviewHistoryPage = () => {
               )}
             </div>
           ))}
-        <h4 style={{ marginBottom: 15, fontSize: 18, color: '#2c3e99' }}>Overall Feedback</h4>
+        <h4 style={{ marginBottom: 15, fontSize: 18, color: '#2c3e99' }}>Strengths and Weaknesses</h4>
 
               {/* Strengths */}
                       {(overallFeedback.detailed_strengths || overallFeedback.strengths)?.length > 0 && (

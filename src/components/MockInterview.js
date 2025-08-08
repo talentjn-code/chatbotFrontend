@@ -1124,14 +1124,22 @@ const MockInterview = ({ jobData, resumeFile }) => {
                 pdf.setFont(undefined, 'normal');
                 yPosition += 10;
                 
+                // Helper function to check page boundaries and add new page if needed
+                const checkPageBreak = (additionalSpace = 30) => {
+                  const pageHeight = pdf.internal.pageSize.getHeight();
+                  if (yPosition + additionalSpace > pageHeight - 40) {
+                    pdf.addPage();
+                    yPosition = 30;
+                    return true;
+                  }
+                  return false;
+                };
+
                 // Get all questions from interviewSession
                 if (interviewSession && interviewSession.questions) {
                   interviewSession.questions.forEach((question, index) => {
-                    // Check if we need a new page
-                    if (yPosition > 250) {
-                      pdf.addPage();
-                      yPosition = 30;
-                    }
+                    // Check if we need a new page before starting a new question
+                    checkPageBreak(80);
                     
                     // Find if this question was answered in conversation history
                     const answeredItem = conversationHistory.find(item => item.questionNumber === index + 1);
@@ -1144,11 +1152,16 @@ const MockInterview = ({ jobData, resumeFile }) => {
                     
                     const questionText = typeof question === 'object' ? question.question : question;
                     const questionLines = pdf.splitTextToSize(questionText, maxLineWidth);
+                    
+                    // Check page break for question lines
+                    checkPageBreak(questionLines.length * 7 + 10);
+                    
                     pdf.setFont(undefined, 'normal');
                     pdf.text(questionLines, margin, yPosition);
                     yPosition += questionLines.length * 7 + 5;
                     
                     // Answer
+                    checkPageBreak(20);
                     pdf.setFont(undefined, 'bold');
                     pdf.text('Your Answer:', margin, yPosition);
                     yPosition += 7;
@@ -1161,6 +1174,10 @@ const MockInterview = ({ jobData, resumeFile }) => {
                     }
                     
                     const answerLines = pdf.splitTextToSize(answerText, maxLineWidth);
+                    
+                    // Check page break for answer lines
+                    checkPageBreak(answerLines.length * 6 + 10);
+                    
                     pdf.setFont(undefined, 'normal');
                     pdf.setFontSize(11);
                     pdf.text(answerLines, margin, yPosition);
@@ -1168,6 +1185,8 @@ const MockInterview = ({ jobData, resumeFile }) => {
                     
                     // Evaluation (if answered)
                     if (answeredItem && answeredItem.evaluation) {
+                      checkPageBreak(30);
+                      
                       pdf.setFontSize(12);
                       if (answeredItem.evaluation.answer_score !== null && answeredItem.evaluation.answer_score !== undefined) {
                         pdf.text(`Score: ${answeredItem.evaluation.answer_score}/100`, margin, yPosition);
@@ -1175,8 +1194,12 @@ const MockInterview = ({ jobData, resumeFile }) => {
                       }
                       
                       if (answeredItem.evaluation.feedback) {
-                        pdf.setFont(undefined, 'italic');
                         const feedbackLines = pdf.splitTextToSize(`Feedback: ${answeredItem.evaluation.feedback}`, maxLineWidth);
+                        
+                        // Check page break for feedback lines
+                        checkPageBreak(feedbackLines.length * 6 + 5);
+                        
+                        pdf.setFont(undefined, 'italic');
                         pdf.setFontSize(11);
                         pdf.text(feedbackLines, margin, yPosition);
                         yPosition += feedbackLines.length * 6;
@@ -1199,7 +1222,7 @@ const MockInterview = ({ jobData, resumeFile }) => {
                   
                   pdf.setFontSize(16);
                   pdf.setFont(undefined, 'bold');
-                  pdf.text('Overall Feedback', margin, yPosition);
+                  pdf.text('Strengths and Weaknesses', margin, yPosition);
                   yPosition += 15;
                   
                   pdf.setFontSize(12);
