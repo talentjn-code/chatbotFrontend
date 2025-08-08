@@ -303,7 +303,7 @@ const InterviewHistoryPage = () => {
                 
                 pdf.setFontSize(14);
                 pdf.setFont(undefined, 'bold');
-                pdf.text('Overall Feedback', margin, yPosition);
+                pdf.text('Strengths and Weaknesses', margin, yPosition);
                 yPosition += 12;
                 
                 pdf.setFontSize(11);

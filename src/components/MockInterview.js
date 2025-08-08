@@ -1219,7 +1219,7 @@ const MockInterview = ({ jobData, resumeFile }) => {
                   
                   pdf.setFontSize(16);
                   pdf.setFont(undefined, 'bold');
-                  pdf.text('Overall Feedback', margin, yPosition);
+                  pdf.text('Strengths and Weaknesses', margin, yPosition);
                   yPosition += 15;
                   
                   pdf.setFontSize(12);
