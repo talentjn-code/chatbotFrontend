@@ -315,17 +315,25 @@ const ChatbotPage = () => {
       pdf.text(`Exported on: ${timestamp}`, margin, yPosition);
       yPosition += 20;
 
+      // Helper function to check page boundaries
+      const checkPageBreak = (additionalSpace = 30) => {
+        if (yPosition + additionalSpace > pageHeight - 40) {
+          pdf.addPage();
+          yPosition = margin;
+          return true;
+        }
+        return false;
+      };
+
       // Add messages
       pdf.setFontSize(12);
       messages.forEach((message, index) => {
         const sender = message.from === 'user' ? 'You' : 'Assistant';
         const prefix = `${sender}: `;
+        const textLines = pdf.splitTextToSize(message.text, maxWidth - 30);
         
-        // Check if we need a new page
-        if (yPosition > pageHeight - 30) {
-          pdf.addPage();
-          yPosition = margin;
-        }
+        // Check if we need a new page for this message
+        checkPageBreak(textLines.length * 6 + 20);
 
         // Add sender label
         pdf.setFont('helvetica', 'bold');
@@ -333,7 +341,6 @@ const ChatbotPage = () => {
         
         // Add message content
         pdf.setFont('helvetica', 'normal');
-        const textLines = pdf.splitTextToSize(message.text, maxWidth - 30);
         pdf.text(textLines, margin + 30, yPosition);
         
         yPosition += textLines.length * 6 + 10;

@@ -1215,14 +1215,11 @@ const MockInterview = ({ jobData, resumeFile }) => {
                 // Overall Feedback Section
                 if (overallFeedback) {
                   // Check if we need a new page
-                  if (yPosition > 200) {
-                    pdf.addPage();
-                    yPosition = 30;
-                  }
+                  checkPageBreak(50);
                   
                   pdf.setFontSize(16);
                   pdf.setFont(undefined, 'bold');
-                  pdf.text('Strengths and Weaknesses', margin, yPosition);
+                  pdf.text('Overall Feedback', margin, yPosition);
                   yPosition += 15;
                   
                   pdf.setFontSize(12);
@@ -1230,6 +1227,7 @@ const MockInterview = ({ jobData, resumeFile }) => {
                   
                   // Strengths
                   if ((overallFeedback.detailed_strengths || overallFeedback.strengths)?.length > 0) {
+                    checkPageBreak(30);
                     pdf.setFont(undefined, 'bold');
                     pdf.text('Strengths:', margin, yPosition);
                     yPosition += 7;
@@ -1237,20 +1235,19 @@ const MockInterview = ({ jobData, resumeFile }) => {
                     
                     (overallFeedback.detailed_strengths || overallFeedback.strengths).forEach((strength, idx) => {
                       const strengthLines = pdf.splitTextToSize(`• ${strength}`, maxLineWidth - 10);
+                      
+                      // Check page break for each strength item
+                      checkPageBreak(strengthLines.length * 7 + 5);
+                      
                       pdf.text(strengthLines, margin + 5, yPosition);
                       yPosition += strengthLines.length * 7;
-                      
-                      // Check for new page
-                      if (yPosition > 260) {
-                        pdf.addPage();
-                        yPosition = 30;
-                      }
                     });
                     yPosition += 10;
                   }
                   
                   // Areas for Improvement
                   if ((overallFeedback.detailed_improvements || overallFeedback.areas_for_improvement)?.length > 0) {
+                    checkPageBreak(30);
                     pdf.setFont(undefined, 'bold');
                     pdf.text('Areas for Improvement:', margin, yPosition);
                     yPosition += 7;
@@ -1258,20 +1255,19 @@ const MockInterview = ({ jobData, resumeFile }) => {
                     
                     (overallFeedback.detailed_improvements || overallFeedback.areas_for_improvement).forEach((area, idx) => {
                       const areaLines = pdf.splitTextToSize(`• ${area}`, maxLineWidth - 10);
+                      
+                      // Check page break for each improvement item
+                      checkPageBreak(areaLines.length * 7 + 5);
+                      
                       pdf.text(areaLines, margin + 5, yPosition);
                       yPosition += areaLines.length * 7;
-                      
-                      // Check for new page
-                      if (yPosition > 260) {
-                        pdf.addPage();
-                        yPosition = 30;
-                      }
                     });
                     yPosition += 10;
                   }
                   
                   // Recommendations
                   if (overallFeedback.recommendations?.length > 0) {
+                    checkPageBreak(30);
                     pdf.setFont(undefined, 'bold');
                     pdf.text('Recommendations:', margin, yPosition);
                     yPosition += 7;
@@ -1279,14 +1275,12 @@ const MockInterview = ({ jobData, resumeFile }) => {
                     
                     overallFeedback.recommendations.forEach((rec, idx) => {
                       const recLines = pdf.splitTextToSize(`• ${rec}`, maxLineWidth - 10);
+                      
+                      // Check page break for each recommendation item
+                      checkPageBreak(recLines.length * 7 + 5);
+                      
                       pdf.text(recLines, margin + 5, yPosition);
                       yPosition += recLines.length * 7;
-                      
-                      // Check for new page
-                      if (yPosition > 260) {
-                        pdf.addPage();
-                        yPosition = 30;
-                      }
                     });
                   }
                 }

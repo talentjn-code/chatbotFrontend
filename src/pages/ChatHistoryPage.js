@@ -75,20 +75,29 @@ const ChatHistoryPage = () => {
               pdf.text(`Total Messages: ${exportData.total_messages}`, margin, yPosition);
               yPosition += 20;
               
-              // Messages
-              exportData.messages.forEach((msg, index) => {
-                // Check if we need a new page
-                if (yPosition > 250) {
+              // Helper function to check page boundaries
+              const checkPageBreak = (additionalSpace = 30) => {
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                if (yPosition + additionalSpace > pageHeight - 40) {
                   pdf.addPage();
                   yPosition = 30;
+                  return true;
                 }
+                return false;
+              };
+
+              // Messages
+              exportData.messages.forEach((msg, index) => {
+                const contentLines = pdf.splitTextToSize(msg.content, maxLineWidth - 30);
+                
+                // Check if we need a new page for this message
+                checkPageBreak(contentLines.length * 7 + 20);
                 
                 // Message header
                 pdf.setFont(undefined, 'bold');
                 pdf.text(`${msg.role === 'user' ? 'You' : 'AI'}: `, margin, yPosition);
                 
                 // Message content
-                const contentLines = pdf.splitTextToSize(msg.content, maxLineWidth - 30);
                 pdf.setFont(undefined, 'normal');
                 pdf.text(contentLines, margin + 30, yPosition);
                 yPosition += contentLines.length * 7 + 10;

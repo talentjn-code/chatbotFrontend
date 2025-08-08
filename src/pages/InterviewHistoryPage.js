@@ -113,6 +113,17 @@ const InterviewHistoryPage = () => {
               const maxLineWidth = pageWidth - 2 * margin;
               let yPosition = 30;
               
+              // Helper function to check page boundaries
+              const checkPageBreak = (additionalSpace = 30) => {
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                if (yPosition + additionalSpace > pageHeight - 40) {
+                  pdf.addPage();
+                  yPosition = 30;
+                  return true;
+                }
+                return false;
+              };
+              
               // Title
               pdf.setFontSize(18);
               pdf.setFont(undefined, 'bold');
@@ -219,48 +230,64 @@ const InterviewHistoryPage = () => {
                 yPosition += 10;
               // Questions and answers
               exportData.questions_and_answers.forEach((qa, index) => {
-                // Check if we need a new page
-                if (yPosition > 220) {
-                  pdf.addPage();
-                  yPosition = 30;
-                }
+                // Check if we need a new page before starting a new question
+                checkPageBreak(80);
                 
                 // Question
                 pdf.setFont(undefined, 'bold');
                 pdf.text(`Q${qa.question_number}: `, margin, yPosition);
                 
                 const questionLines = pdf.splitTextToSize(qa.question, maxLineWidth - 30);
+                
+                // Check page break for question lines
+                checkPageBreak(questionLines.length * 7 + 10);
+                
                 pdf.setFont(undefined, 'normal');
                 pdf.text(questionLines, margin + 30, yPosition);
                 yPosition += questionLines.length * 7 + 5;
                 
                 // Answer
+                checkPageBreak(20);
                 pdf.setFont(undefined, 'bold');
                 pdf.text('Answer: ', margin, yPosition);
                 
                 const answerLines = pdf.splitTextToSize(qa.answer, maxLineWidth - 30);
+                
+                // Check page break for answer lines
+                checkPageBreak(answerLines.length * 7 + 10);
+                
                 pdf.setFont(undefined, 'normal');
                 pdf.text(answerLines, margin + 30, yPosition);
                 yPosition += answerLines.length * 7 + 5;
                 
                 // Score and feedback
+                checkPageBreak(15);
                 const score = qa.score ?? 0;
                 pdf.text(`Score: ${score}/100`, margin, yPosition);
                 yPosition += 7;
                 
                 if (qa.feedback) {
                   const feedbackLines = pdf.splitTextToSize(`Feedback: ${qa.feedback}`, maxLineWidth);
+                  
+                  // Check page break for feedback lines
+                  checkPageBreak(feedbackLines.length * 7 + 5);
+                  
                   pdf.text(feedbackLines, margin, yPosition);
                   yPosition += feedbackLines.length * 7;
                 }
                 
                 // Add improvements if available
                 if (qa.improvements && qa.improvements.length > 0) {
+                  checkPageBreak(30);
                   yPosition += 5;
                   pdf.text('Areas for Improvement:', margin, yPosition);
                   yPosition += 7;
                   qa.improvements.forEach((improvement) => {
                     const improvementLines = pdf.splitTextToSize(`• ${improvement}`, maxLineWidth - 10);
+                    
+                    // Check page break for each improvement line
+                    checkPageBreak(improvementLines.length * 6 + 5);
+                    
                     pdf.text(improvementLines, margin + 5, yPosition);
                     yPosition += improvementLines.length * 6;
                   });
@@ -272,14 +299,11 @@ const InterviewHistoryPage = () => {
               // Overall Feedback Section
               if (overallFeedback) {
                 // Check if we need a new page
-                if (yPosition > 180) {
-                  pdf.addPage();
-                  yPosition = 30;
-                }
+                checkPageBreak(50);
                 
                 pdf.setFontSize(14);
                 pdf.setFont(undefined, 'bold');
-                pdf.text('Strengths and Weaknesses', margin, yPosition);
+                pdf.text('Overall Feedback', margin, yPosition);
                 yPosition += 12;
                 
                 pdf.setFontSize(11);
@@ -287,6 +311,7 @@ const InterviewHistoryPage = () => {
                 
                 // Strengths
                 if ((overallFeedback.detailed_strengths || overallFeedback.strengths)?.length > 0) {
+                  checkPageBreak(30);
                   pdf.setFont(undefined, 'bold');
                   pdf.text('Strengths:', margin, yPosition);
                   yPosition += 8;
@@ -294,19 +319,19 @@ const InterviewHistoryPage = () => {
                   
                   (overallFeedback.detailed_strengths || overallFeedback.strengths).forEach((strength) => {
                     const strengthLines = pdf.splitTextToSize(`• ${strength}`, maxLineWidth - 10);
+                    
+                    // Check page break for each strength item
+                    checkPageBreak(strengthLines.length * 6 + 5);
+                    
                     pdf.text(strengthLines, margin + 5, yPosition);
                     yPosition += strengthLines.length * 6 + 2;
-                    
-                    if (yPosition > 250) {
-                      pdf.addPage();
-                      yPosition = 30;
-                    }
                   });
                   yPosition += 8;
                 }
                 
                 // Areas for Improvement
                 if ((overallFeedback.detailed_improvements || overallFeedback.areas_for_improvement)?.length > 0) {
+                  checkPageBreak(30);
                   pdf.setFont(undefined, 'bold');
                   pdf.text('Areas for Improvement:', margin, yPosition);
                   yPosition += 8;
@@ -314,19 +339,19 @@ const InterviewHistoryPage = () => {
                   
                   (overallFeedback.detailed_improvements || overallFeedback.areas_for_improvement).forEach((area) => {
                     const areaLines = pdf.splitTextToSize(`• ${area}`, maxLineWidth - 10);
+                    
+                    // Check page break for each improvement item
+                    checkPageBreak(areaLines.length * 6 + 5);
+                    
                     pdf.text(areaLines, margin + 5, yPosition);
                     yPosition += areaLines.length * 6 + 2;
-                    
-                    if (yPosition > 250) {
-                      pdf.addPage();
-                      yPosition = 30;
-                    }
                   });
                   yPosition += 8;
                 }
                 
                 // Recommendations
                 if (overallFeedback.recommendations?.length > 0) {
+                  checkPageBreak(30);
                   pdf.setFont(undefined, 'bold');
                   pdf.text('Recommendations:', margin, yPosition);
                   yPosition += 8;
@@ -334,13 +359,12 @@ const InterviewHistoryPage = () => {
                   
                   overallFeedback.recommendations.forEach((rec) => {
                     const recLines = pdf.splitTextToSize(`• ${rec}`, maxLineWidth - 10);
+                    
+                    // Check page break for each recommendation item
+                    checkPageBreak(recLines.length * 6 + 5);
+                    
                     pdf.text(recLines, margin + 5, yPosition);
                     yPosition += recLines.length * 6 + 2;
-                    
-                    if (yPosition > 250) {
-                      pdf.addPage();
-                      yPosition = 30;
-                    }
                   });
                 }
               }
